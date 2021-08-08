@@ -1,14 +1,107 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin="" />    
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+
+    <script src="rotatedMarker.js"></script>
+    <title>Document</title>
+    <style>
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    </style>
 </head>
 
 <body>
-<h1>Testando</h1>
+    <div id="map"></div>
+
+    <script>
+        var map = L.map('map').setView([-12.163200486951586, -53.51511964322111], 4);
+
+        L.tileLayer('https://api.maptiler.com/maps/outdoor/{z}/{x}/{y}.png?key=Fkp36zcsYkGDfPsa51DB', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+
+        }).addTo(map);
+
+        layerGroup = L.layerGroup().addTo(map);
+
+        const api_flight = 'https://api.infiniteflight.com/public/v2/flights/7e5dcd44-1fb5-49cc-bc2c-a9aab1f6a856?apikey=nvo8c790hfa9q3duho2jhgd2jf8tgwqw';
+
+        const api_atc = 'https://api.infiniteflight.com/public/v2/atc/7e5dcd44-1fb5-49cc-bc2c-a9aab1f6a856?apikey=nvo8c790hfa9q3duho2jhgd2jf8tgwqw';
+       
+        async function getISS() {
+
+            const response_atc = await fetch(api_atc);
+            const atc = await response_atc.json();
+            let atcs = atc.result
+
+            const response = await fetch(api_flight);
+            const data = await response.json();
+            let array = data.result.filter(x => x.virtualOrganization && x.virtualOrganization.includes('Infinite Flight Aero Americas'));
+            
+            layerGroup.clearLayers();
+
+
+            for (i in atcs) {
+                atc_lat = atcs[i].latitude;
+                atc_long = atcs[i].longitude;
+
+                var airplane = L.icon({
+                iconUrl: 'https://i.ibb.co/W3Gt7rX/atcpin.png',
+                iconSize: [25, 38],
+                iconAnchor: [12, 24]
+                });
+
+                marker = L.marker([atc_lat, atc_long], { icon: airplane }).addTo(layerGroup)
+      }
+
+
+            // Pegando informacões da API
+
+            for (i in array) {
+
+                lat = array[i].latitude;
+                long = array[i].longitude;
+                user = array[i].username;
+                cal = array[i].callsign;
+                alt = array[i].altitude;
+                vel = array[i].speed;
+                hdg = array[i].heading;
+                livery = array[i].liveryId;
+
+            // Icone do avião
+
+                var aircraft = L.icon({
+                iconUrl: 'https://i.ibb.co/tL4Q8ym/airplane.png',
+                iconSize: [24, 24],
+                iconAnchor: [12, 24],
+                labelAnchor: [6, 0] });
+
+                marker = L.marker([lat, long], { icon: aircraft, rotationAngle: hdg }).addTo(layerGroup)
+                marker.bindPopup("<img src='https://profilestats.kaimalcolm.com/v1/" + user + ".svg' alt=''>");
+
+            }
+        }
+        
+        setInterval(getISS, 10000)
+
+    </script>
+
 </body>
 
 </html>
