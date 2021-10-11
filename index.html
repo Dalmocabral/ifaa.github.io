@@ -24,6 +24,118 @@
             left: 0;
             right: 0;
         }
+        
+  th {
+    color: #fff;
+  }
+
+  #loader {
+    display: none;
+  }
+
+  .labelstyle {
+
+    color: red;
+    font-size: 14px;
+    font-weight: 700;
+    fillColor: none;
+    fillOpacity: 0;
+    background-color: none;
+    border-color: none;
+    background: none;
+    border: none;
+    box-shadow: none;
+    margin: 0px;
+    cursor: none;
+
+  }
+
+  .leaflet-tooltip-left:before {
+    right: 0;
+    margin-right: -12px;
+    border-left-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .leaflet-tooltip-right:before {
+    left: 0;
+    margin-left: -12px;
+    border-right-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .leaflet-tooltip-own {
+    position: absolute;
+    padding: 4px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 0px solid #000;
+    color: #000;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  }
+
+
+
+  .toggle {
+    margin-bottom: 20px;
+  }
+
+  .toggle>input {
+    display: none;
+  }
+
+  .toggle>label {
+    position: relative;
+    display: block;
+    height: 28px;
+    width: 52px;
+    background-color: #f7f7f7;
+    border: 1px #a2e3e6 solid;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .toggle>label:after {
+    position: absolute;
+    left: 1px;
+    top: 1px;
+    display: block;
+    width: 26px;
+    height: 26px;
+    border-radius: 100px;
+    background: #fff;
+    box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.05);
+    content: '';
+    transition: all 0.3s ease;
+  }
+
+  .toggle>label:active:after {
+    transform: scale(1.15, 0.85);
+  }
+
+  .toggle>input:checked~label {
+    background-color: #4cda64;
+    border-color: #4cda64;
+  }
+
+  .toggle>input:checked~label:after {
+    left: 25px;
+  }
+
+  .toggle>input:disabled~label {
+    background-color: #d5d5d5;
+    pointer-events: none;
+  }
+
+  .toggle>input:disabled~label:after {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+
+
     </style>
 </head>
 
@@ -43,8 +155,13 @@
         const api_flight = 'https://api.infiniteflight.com/public/v2/flights/7e5dcd44-1fb5-49cc-bc2c-a9aab1f6a856?apikey=nvo8c790hfa9q3duho2jhgd2jf8tgwqw';
 
         const api_atc = 'https://api.infiniteflight.com/public/v2/atc/7e5dcd44-1fb5-49cc-bc2c-a9aab1f6a856?apikey=nvo8c790hfa9q3duho2jhgd2jf8tgwqw';
+
+        const logo = 'https://raw.githubusercontent.com/Dalmocabral/infinteflightaerobrasil_atc/master/Planilha1.json';
        
         async function getISS() {
+
+            const response_log = await fetch(logo);
+            const logos = await response_log.json();
 
             const response_atc = await fetch(api_atc);
             const atc = await response_atc.json();
@@ -52,7 +169,7 @@
 
             const response = await fetch(api_flight);
             const data = await response.json();
-            let array = data.result.filter(x => x.virtualOrganization && x.virtualOrganization.includes('Infinite Flight Aero Americas'));
+            let array = data.result.filter(x => x.virtualOrganization && x.virtualOrganization.includes('Infinite Flight Aero America'));
             
             layerGroup.clearLayers();
 
@@ -91,10 +208,14 @@
                 iconSize: [24, 24],
                 iconAnchor: [12, 24],
                 labelAnchor: [6, 0] });
+                
+                for (d in logos) {
+                    if (livery == logos[d].LiveryId) {
+                        marker = L.marker([lat, long], { icon: aircraft, rotationAngle: hdg }).bindTooltip('<img src="' + logos[d].Logo + '" width="25px">', { className: 'labelstyle', permanent: true, color: "#FF000080", radius: 12, direction: 'auto' }).addTo(layerGroup)
+                        marker.bindPopup(cal);
 
-                marker = L.marker([lat, long], { icon: aircraft, rotationAngle: hdg }).addTo(layerGroup)
-                marker.bindPopup("<img src='https://profilestats.kaimalcolm.com/v1/" + user + ".svg' alt=''>");
-
+                    }
+                }
             }
         }
         
