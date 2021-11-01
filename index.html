@@ -156,12 +156,12 @@
 
         const api_atc = 'https://api.infiniteflight.com/public/v2/atc/7e5dcd44-1fb5-49cc-bc2c-a9aab1f6a856?apikey=nvo8c790hfa9q3duho2jhgd2jf8tgwqw';
 
-        const logo = 'https://raw.githubusercontent.com/Dalmocabral/infinteflightaerobrasil_atc/master/Planilha1.json';
+       /* const logo = 'https://raw.githubusercontent.com/Dalmocabral/infinteflightaerobrasil_atc/master/Planilha1.json'; */
        
         async function getISS() {
 
-            const response_log = await fetch(logo);
-            const logos = await response_log.json();
+           /* const response_log = await fetch(logo);
+            const logos = await response_log.json(); */
 
             const response_atc = await fetch(api_atc);
             const atc = await response_atc.json();
@@ -209,13 +209,11 @@
                 iconAnchor: [12, 24],
                 labelAnchor: [6, 0] });
                 
-                for (d in logos) {
-                    if (livery == logos[d].LiveryId) {
-                        marker = L.marker([lat, long], { icon: aircraft, rotationAngle: hdg }).bindTooltip('<img src="' + logos[d].Logo + '" width="25px">', { className: 'labelstyle', permanent: true, color: "#FF000080", radius: 12, direction: 'auto' }).addTo(layerGroup)
-                        marker.bindPopup(cal);
-
-                    }
-                }
+               
+                marker = L.marker([lat, long], { icon: aircraft, rotationAngle: hdg }).bindTooltip('<img src="' + logos[d].Logo + '" width="25px">', { className: 'labelstyle', permanent: true, color: "#FF000080", radius: 12, direction: 'auto' }).addTo(layerGroup)
+                marker.bindPopup("<img src='https://profilestats.kaimalcolm.com/v1/" + user + ".svg' alt=''>");
+                  
+               
             }
         }
         
