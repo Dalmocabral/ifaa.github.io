@@ -210,7 +210,7 @@
                 labelAnchor: [6, 0] });
                 
                
-                marker = L.marker([lat, long], { icon: aircraft, rotationAngle: hdg }).bindTooltip('<img src="' + logos[d].Logo + '" width="25px">', { className: 'labelstyle', permanent: true, color: "#FF000080", radius: 12, direction: 'auto' }).addTo(layerGroup)
+                marker = L.marker([lat, long], { icon: aircraft, rotationAngle: hdg }).addTo(layerGroup)
                 marker.bindPopup("<img src='https://profilestats.kaimalcolm.com/v1/" + user + ".svg' alt=''>");
                   
                
